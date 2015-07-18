@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import RPi.GPIO as GPIO
+import time
 from gpio_const import outpins, gndpins, pin_position_num, RESET_NUM
 
 class Util7segLED():
@@ -22,7 +23,7 @@ class Util7segLED():
 
 
     # カレント桁数の番号を点灯
-    def lighting(self, n):
+    def lightOne(self, n):
         out = pin_position_num[n]
 
         for i in range(7):
@@ -43,24 +44,15 @@ class Util7segLED():
 
     # 4桁の時分の数字を渡して7セグLEDをダイナミック点灯させる
     def dynamicLighting(self, hm):
-
         hm_l = [int(i) for i in hm]
+
         for i in range(4):
-
-            n = display[i]
-
-            self.lighting(RESET_NUM)     # 点灯をリセット
+            self.lightOne(RESET_NUM)     # 点灯をリセット
             self.lightDigit(i)           # 点灯する桁数
-            self.lighting(pin_position_num[n]) # 点灯
+            self.lightOne(hm_l[i])       # 点灯
             time.sleep(self.sleep)       # ウェイト
 
 
     def lightOut(self):
         GPIO.cleanup()
 
-
-LED = Util7segLED()
-for i in range(10):
-    LED.dynamicLighting(1050)
-
-LED.lightOut()

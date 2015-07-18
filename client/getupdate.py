@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from urllib import request
 import datetime
 import json
+import os
 
 from const import baseurl, filepath, username, password # 設定のインポート
 
@@ -28,13 +28,22 @@ diff = datetime.timedelta(hours=-9,minutes=-1)
 adjust = now + diff
 
 udate = adjust.strftime("%a, %d %b %Y %H:%M:%S GMT")
-print(udate)
+#print(udate)
 req.add_header("If-Modified-Since", udate)
 
 try:
     response = request.urlopen(req)
-    print(response.info())
+    #print(response.info())
     udata = json.loads(response.read().decode('utf8'))  # byte型から文字列に変換
+
+    hm = udata['hm']
+    # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
+    os.system('sudo python3 lighthm.py ' + hm + ' &')
+    #subprocess.call('sudo python3 lighthm.py ' + hm, shell=True)
+    #print('end')
+    #print(hm)
+    #print(isinstance(hm,str))
+
     # 更新されていたら一括で変更
     #print(udata)
     #print(response.geturl())

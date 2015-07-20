@@ -37,8 +37,11 @@ try:
     udata = json.loads(response.read().decode('utf8'))  # byte型から文字列に変換
 
     hm = udata['hm']
-    # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
-    os.system('sudo python3 lighthm.py ' + hm + ' &')
+
+    if hm != "":
+        # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
+        os.system('sudo python3 lighthm.py ' + hm + ' &')
+
     #subprocess.call('sudo python3 lighthm.py ' + hm, shell=True)
     #print('end')
     #print(hm)

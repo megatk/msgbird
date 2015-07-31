@@ -36,11 +36,16 @@ try:
     #print(response.info())
     udata = json.loads(response.read().decode('utf8'))  # byte型から文字列に変換
 
-    hm = udata['hm']
+    hm   = udata['hm']
+    stop = udata['stop']
 
-    if hm != "":
+    if int(stop) == 1:
+        os.system('echo 1 > stop.txt')
+    elif hm != "":
         # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
+        os.system('echo 0 > stop.txt')
         os.system('sudo python3 lighthm.py ' + hm + ' &')
+
 
     #subprocess.call('sudo python3 lighthm.py ' + hm, shell=True)
     #print('end')

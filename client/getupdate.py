@@ -38,6 +38,7 @@ try:
 
     hm   = udata['hm']
     stop = udata['stop']
+    msg  = udata['msg']
 
     if int(stop) == 1:
         os.system('echo 1 > stop.txt')
@@ -46,6 +47,8 @@ try:
         os.system('echo 0 > stop.txt')
         os.system('sudo python3 lighthm.py ' + hm + ' &')
 
+    # 一言メッセージ
+    os.system('sudo python3 writelcd.py ' + '"' + msg + '"')
 
     #subprocess.call('sudo python3 lighthm.py ' + hm, shell=True)
     #print('end')

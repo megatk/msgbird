@@ -15,7 +15,6 @@ class UtilCharacterLCD():
     def __init__(self):
         self.bus = smbus.SMBus(CHANNEL)
 
-        self.clearLCD()
         self.init_SB1602B()
 
     def init_SB1602B(self):

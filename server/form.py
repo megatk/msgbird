@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import cgi
 import json
 import datetime
@@ -12,6 +11,7 @@ class Form(Webcore):
         f = cgi.FieldStorage()
         self.leave  = f.getfirst('leave', False)
         self.cancel = f.getfirst('cancel', False)
+        self.msg    = f.getfirst('msg', "")
 
         # 3モードで分岐
         # get   ・・・ 初回アクセス
@@ -28,6 +28,9 @@ class Form(Webcore):
     def import_leave(self):
         return self.t.leave
 
+    def import_msg(self):
+        return self.t.msg
+
 if __name__ == '__main__':
 
     app = Form()
@@ -41,31 +44,36 @@ if __name__ == '__main__':
             # jsonファイルの書き込み
             udata['hm'] = hm
             udata['stop'] = "0"
+            udata['msg'] = app.msg
 
         elif app.mode == 'cancel':
             udata['hm'] = ""
             udata['stop'] = "1"
+            udata['msg'] = ""
 
-        f = open('update.json', 'w', encoding='utf8')
+        f = open('kaneko.json', 'w', encoding='utf8')
         f.write(json.dumps(udata))
 
     # jsonファイルの読み込み
-    f = open('update.json', 'r', encoding='utf8')
+    f = open('kaneko.json', 'r', encoding='utf8')
     udata = json.loads(f.read())
 
-    hm   = udata['hm']
-    stop = udata['stop']
+    hm      = udata['hm']
+    stop    = udata['stop']
 
     html, script = app.import_tmp(__file__) # ファイル名からhtmlとscriptを展開する
-    leave = app.import_leave();
+    leave  = app.import_leave()
     cancel = app.import_cancel()
+    msg    = app.import_msg()
 
     if hm != "":
         # hh:mm形式にしたい
         leave = '退社 ' + hm
-
-    if int(stop) == 1 or hm == "":
-        # 退社ボタンを押していない or 既にキャンセル済みの場合は表示を出さない
+    else:
+        # 退社ボタンが既に押されている
         cancel = ""
 
-    app.rander(html.format(script=script,leave=leave,cancel=cancel))
+    if len(udata['msg']) > 0:
+        msg = udata['msg']
+
+    app.rander(html.format(script=script,leave=leave,cancel=cancel,msg=msg))

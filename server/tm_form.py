@@ -28,6 +28,10 @@ html = '''
     </div>
     <div data-role="content">
         <form method="POST" action="form.py">
+            <div class="ui-field-contain">
+                <label for="msg">一言メッセージ</label>
+                {msg}
+            </div>
             <fieldset class="ui-grid">
             <div class="ui-block">{leave}</div>
             </fieldset>
@@ -51,3 +55,4 @@ cancel = """
 """
 
 leave = '<input type="submit" value="退社" name="leave" />'
+msg = '<input id="msg" name="msg" type="text" value="" />'

@@ -24,42 +24,26 @@ req = request.Request(filepath)
 # 1分おきに更新を監視 → 1分前からみて更新のない場合はファイルを取得しない
 # 関数化したい
 now  = datetime.datetime.now()
-diff = datetime.timedelta(hours=-9,minutes=-1)
+diff = datetime.timedelta(hours=-9, minutes=-1)
 adjust = now + diff
 
 udate = adjust.strftime("%a, %d %b %Y %H:%M:%S GMT")
-#print(udate)
 req.add_header("If-Modified-Since", udate)
 
 try:
     response = request.urlopen(req)
-    #print(response.info())
     udata = json.loads(response.read().decode('utf8'))  # byte型から文字列に変換
-
     hm   = udata['hm']
     stop = udata['stop']
-    msg  = udata['msg']
 
     if int(stop) == 1:
         os.system('echo 1 > stop.txt')
     elif hm != "":
         # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
         os.system('echo 0 > stop.txt')
+        os.system('sudo python3 notice.py &')
         os.system('sudo python3 lighthm.py ' + hm + ' &')
 
-    # 一言メッセージ
-    os.system('sudo python3 writelcd.py ' + '"' + msg + '"')
-
-    #subprocess.call('sudo python3 lighthm.py ' + hm, shell=True)
-    #print('end')
-    #print(hm)
-    #print(isinstance(hm,str))
-
-    # 更新されていたら一括で変更
-    #print(udata)
-    #print(response.geturl())
-    #print(response.code)
-    #print(response.msg)
 except request.HTTPError as e:
     # サーバー上のファイルが更新されていない場合 304となり終了
     # エラー処理は別途検討が必要

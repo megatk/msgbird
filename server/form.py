@@ -34,13 +34,14 @@ if __name__ == '__main__':
     if app.mode == 'leave':
         udata['hm'] = datetime.datetime.now().strftime('%H%M')
         udata['stop'] = "0"
+        f = open(app.filename, 'w', encoding='utf8')
+        f.write(json.dumps(udata))
 
     elif app.mode == 'cancel':
         udata['hm'] = ""
         udata['stop'] = "1"
-
-    f = open(app.filename, 'w', encoding='utf8')
-    f.write(json.dumps(udata))
+        f = open(app.filename, 'w', encoding='utf8')
+        f.write(json.dumps(udata))
 
     hm = ""
     if('' != udata['hm']):

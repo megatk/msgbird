@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# サーバー側のJsonファイル（退社時間の更新）を監視する
+# （このファイルをcronで1分おきに実行するように設定する）
 from urllib import request
 import datetime
 import json
@@ -20,13 +22,12 @@ request.install_opener(opener)
 # HTTPヘッダーの指定
 req = request.Request(filepath)
 
-# GMTに時刻を変換
-# 1分おきに更新を監視 → 1分前からみて更新のない場合はファイルを取得しない
-# 関数化したい
+# If-Modified-Since ヘッダーでサーバー側に更新がない場合はJsonファイルを取得しない
+# -9時間：サーバーのタイムゾーンに合わせる JST → GMT
+# -1分：1分おきに更新を監視 → 1分前からみて更新があるかみてあげれば良い
 now  = datetime.datetime.now()
 diff = datetime.timedelta(hours=-9, minutes=-1)
 adjust = now + diff
-
 udate = adjust.strftime("%a, %d %b %Y %H:%M:%S GMT")
 req.add_header("If-Modified-Since", udate)
 
@@ -36,10 +37,10 @@ try:
     hm   = udata['hm']
     stop = udata['stop']
 
-    if int(stop) == 1:
+    if int(stop) == 1: # 取り消しの場合はLED点灯を止める
         os.system('echo 1 > stop.txt')
-    elif hm != "":
-        # 複数のファイルを実行するのでバックグラウンド実行で getupdate.py側の処理は止めない
+    elif hm != "": # 退社時間がある場合はLED点灯と通知音を鳴らす
+        # 複数のファイルを実行するのでバックグラウンド実行とし getupdate.py側の処理は止めない
         os.system('echo 0 > stop.txt')
         os.system('sudo python3 notice.py &')
         os.system('sudo python3 lighthm.py ' + hm + ' &')

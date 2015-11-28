@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 通知音の操作
 import RPi.GPIO as GPIO
 import time
 

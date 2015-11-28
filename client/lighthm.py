@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 7セグLEDの操作 実行時 第一引数に退社時間を渡す
 import sys
 from util7segLED import Util7segLED
 

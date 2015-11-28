@@ -9,10 +9,12 @@ class Webcore:
         self.debug = debug
         self.method = os.environ.get('REQUEST_METHOD', "")
 
-        #テンプレートエンジンの準備
+        # テンプレートエンジンの準備
         self.env = Environment(loader=FileSystemLoader(basepath, encoding='utf8'))
+        # テンプレートに割り当てる値をkey:valueで格納
         self.conv = {}
 
+        # print()実行時にLANGの環境変数が参照されるため、utf-8で上書きする
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
         if debug:
@@ -33,11 +35,7 @@ class Webcore:
 
         print('Content-type: text/html; charset=utf-8') # header
         print()                                         # end of header
-        print(output)    # cgi.escapeでhtmlエスケープ
-        sys.exit()
-
-    def exithalfway(self,html):
-        self.put(html)
+        print(output)                                   # output
         sys.exit()
 
     def is_post(self):

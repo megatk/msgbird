@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 退社ボタン 管理画面
 import cgi
 import json
 import datetime
@@ -27,17 +28,19 @@ class Form(Webcore):
 if __name__ == '__main__':
 
     app = Form()
+
+    # 現Jsonデータを読み込む
     f = open(app.filename, 'r', encoding='utf8')
     udata = json.loads(f.read())
     f.close()
 
-    if app.mode == 'leave':
+    if app.mode == 'leave': # 退社ボタンを押したとき
         udata['hm'] = datetime.datetime.now().strftime('%H%M')
         udata['stop'] = "0"
         f = open(app.filename, 'w', encoding='utf8')
         f.write(json.dumps(udata))
 
-    elif app.mode == 'cancel':
+    elif app.mode == 'cancel': # 取り消すボタンを押したとき
         udata['hm'] = ""
         udata['stop'] = "1"
         f = open(app.filename, 'w', encoding='utf8')
@@ -45,6 +48,6 @@ if __name__ == '__main__':
 
     hm = ""
     if('' != udata['hm']):
-        hm = datetime.datetime.strptime(udata['hm'], '%H%M').strftime('%H:%M')
+        hm = datetime.datetime.strptime(udata['hm'], '%H%M').strftime('%H:%M') # 表示用
 
     app.put('form.html',{'hm': hm })
